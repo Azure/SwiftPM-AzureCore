@@ -91,7 +91,7 @@ platform :ios, '12.0'
 use_frameworks!
 
 target 'MyTarget' do
-  pod 'AzureCore', '~> 1.0.0-beta.10'
+  pod 'AzureCore', '1.0.0-beta.11'
   ...
 end
 ```

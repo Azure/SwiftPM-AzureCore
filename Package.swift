@@ -34,7 +34,7 @@ let package = Package(
         .macOS(.v10_15), .iOS(.v12), .tvOS(.v12)
     ],
     products: [
-        .library(name: "AzureCore", targets: ["AzureCore"]),
+        .library(name: "AzureCore", targets: ["AzureCore"])
     ],
     dependencies: [],
     targets: [
@@ -44,7 +44,8 @@ let package = Package(
             dependencies: [],
             path: "Source",
             exclude: [
-                "Source/Supporting Files"
+                "Source/Supporting Files",
+                "LICENSE"
             ]
         ),
         // Test targets
