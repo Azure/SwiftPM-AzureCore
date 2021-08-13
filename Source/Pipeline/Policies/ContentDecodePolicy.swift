@@ -218,7 +218,10 @@ public class ContentDecodePolicy: PipelineStage {
     ) {
         let stream = pipelineResponse.value(forKey: "stream") as? Bool ?? false
         guard stream == false else { return }
-        guard let contentType = pipelineResponse.httpResponse?.contentTypes?.first else { return }
+        guard let contentType = pipelineResponse.httpResponse?.contentTypes?.first else {
+            completionHandler(error, false)
+            return
+        }
         guard let deserializedError = try? deserialize(
             from: pipelineResponse,
             contentType: contentType,
