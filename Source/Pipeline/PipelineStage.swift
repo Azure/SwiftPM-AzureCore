@@ -98,18 +98,8 @@ public extension PipelineStage {
             // if error occurs during the onRequest phase, back out and
             // propagate immediately
             if let error = error {
-                let pipelineResponse = PipelineResponse(
-                    request: request.httpRequest,
-                    response: nil,
-                    logger: request.logger,
-                    context: request.context
-                )
-                self.on(error: error, pipelineResponse: pipelineResponse) { errorOut, handled in
-                    if !handled {
-                        completionHandler(.failure(errorOut), nil)
-                        return
-                    }
-                }
+                completionHandler(.failure(error), nil)
+                return
             }
             self.next!.process(request: request) { result, httpResponse in
                 switch result {
