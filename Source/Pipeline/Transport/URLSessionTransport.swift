@@ -107,17 +107,12 @@ public class URLSessionTransport: TransportStage {
             let httpResponse = URLHTTPResponse(request: httpRequest, response: rawResponse)
             httpResponse.data = data
 
-            if let error = error {
-                completionHandler(.failure(AzureError.service("Service error.", error)), httpResponse)
-                return
-            }
-
             // check for invalid status codes
             let statusCode = httpResponse.statusCode ?? -1
             let allowedStatusCodes = responseContext?.value(forKey: .allowedStatusCodes) as? [Int] ?? [200]
             if !allowedStatusCodes.contains(statusCode) {
                 // do not add the inner error, as it may require decoding from XML.
-                let error = AzureError.service("Service returned invalid status code [\(statusCode)].", nil)
+                let error = AzureError.service("Service returned invalid status code [\(statusCode)].", error)
                 completionHandler(.failure(error), httpResponse)
                 return
             }
@@ -128,7 +123,11 @@ public class URLSessionTransport: TransportStage {
                 logger: logger,
                 context: responseContext
             )
-            completionHandler(.success(pipelineResponse), httpResponse)
+            if let error = error {
+                completionHandler(.failure(AzureError.service("Service error.", error)), httpResponse)
+            } else {
+                completionHandler(.success(pipelineResponse), httpResponse)
+            }
         }.resume()
     }
 }
