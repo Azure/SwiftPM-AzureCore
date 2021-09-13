@@ -107,6 +107,11 @@ public class URLSessionTransport: TransportStage {
             let httpResponse = URLHTTPResponse(request: httpRequest, response: rawResponse)
             httpResponse.data = data
 
+            if let error = error {
+                completionHandler(.failure(AzureError.service("Service error.", error)), httpResponse)
+                return
+            }
+
             // check for invalid status codes
             let statusCode = httpResponse.statusCode ?? -1
             let allowedStatusCodes = responseContext?.value(forKey: .allowedStatusCodes) as? [Int] ?? [200]
@@ -123,11 +128,7 @@ public class URLSessionTransport: TransportStage {
                 logger: logger,
                 context: responseContext
             )
-            if let error = error {
-                completionHandler(.failure(AzureError.service("Service error.", error)), httpResponse)
-            } else {
-                completionHandler(.success(pipelineResponse), httpResponse)
-            }
+            completionHandler(.success(pipelineResponse), httpResponse)
         }.resume()
     }
 }
